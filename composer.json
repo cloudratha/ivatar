@@ -1,0 +1,25 @@
+{
+    "name": "cloudratha/ivatar",
+    "description": "Generates Initial based Avatars for Laravel",
+    "keywords": ["laravel", "avatar", "initial"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gareth Cozens",
+            "email": "gareth@cuzzy.co.za"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "suggest": {
+        "ext-gd": "to use GD library based image processing.",
+        "ext-imagick": "to use Imagick based image processing."
+    },
+    "autoload": {
+        "psr-4": {
+
+        }
+    }
+}
