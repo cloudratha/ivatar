@@ -2,25 +2,19 @@
 
 namespace Cuzzy\Ivatar;
 
-class Ivatar
+use Closure;
+
+class Ivatar implements Contracts\Factory
 {
-    public $config = array(
-        'driver' => 'gd',
-        'width' => 300,
-        'background' => '#999999',
-        'height' => 300,
-        'font' => '/opensans.ttf',
-        'color' => '#d25349',
-        'opacity' => 0,
-        'size' => 30,
-        'offset' => [
-            'x' => 0,
-            'y' => 0
-        ]
-    );
+    protected $drivers = [
+        'gd'
+    ];
+
+    protected $config = array();
 
     public function __construct( array $config = array() )
     {
+        dd($config);
         $this->configure( $config );
         $this->validateFont();
     }
@@ -35,32 +29,41 @@ class Ivatar
     {
         return $this->driver()->create($data);
     }
-    
+
     public function driver()
     {
         $drivername = ucfirst($this->config['driver']);
         $driverclass = sprintf('Cuzzy\\Ivatar\\Drivers\\%s\\Driver', $drivername);
-
         if (class_exists($driverclass))
         {
             return new $driverclass($this->config);
         }
-
-        throw new \Cuzzy\Ivatar\Exception\NotSupportedException(
+        throw new Exception\NotSupportedException(
             "Driver ({$drivername}) could not be instantiated."
         );
     }
 
     public function validateFont()
     {
-        $this->config['font'] = public_path() . $this->config['font'];
-        if ( file_exists( $this->config['font'] ) )
+        $this->config['font'] = ($this->config['font'] === '') ? $this->config['font'] = __DIR__.'/Assets/OpenSans-Bold.ttf' : base_path( $this->config['font']);
+
+        if ( is_file( $this->config['font'] ) )
         {
             return true;
         }
 
-        throw new \Cuzzy\Ivatar\Exception\NotFoundException(
+        throw new Exception\NotFoundException(
             "Font not found ({$this->config['font']})"
         );
+    }
+
+    public function buildDriver($driver)
+    {
+        return new $driver($this->app['request'], $this->config);
+    }
+
+    public function getDefaultDriver()
+    {
+        return $this->buildDriver('Cuzzy\Ivatar\Drivers\Gd\Driver');
     }
 }
