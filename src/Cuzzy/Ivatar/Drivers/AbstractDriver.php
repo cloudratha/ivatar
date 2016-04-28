@@ -2,44 +2,44 @@
 
 namespace Cuzzy\Ivatar\Drivers;
 
-use Illuminate\Http\Request;
 use Cuzzy\Ivatar\Drivers\Contracts\IvatarDriverInterface;
+use Cuzzy\Ivatar\Color;
 use Cuzzy\Ivatar\Exception;
 
 abstract class AbstractDriver implements IvatarDriverInterface
 {
-    protected $request;
+    public $ivatar;
+    public $encode;
     protected $config;
     protected $text;
     protected $font;
     protected $options = [
-        'size' => '',
+        'size'  => '',
         'color' => ''
     ];
 
-    public function __construct( Request $request, array $config )
+    public function __construct( array $config )
     {
-        $this->request = $request;
         $this->config = $config;
     }
 
     public function prepareData( $data )
     {
-        if ( is_array($data) )
+        if ( is_array( $data ) )
         {
-            if (isset($data['text']))
+            if ( isset( $data['text'] ) )
             {
                 $this->formatText( $data['text'] );
             }
-            foreach ($this->options as $key => $value)
+            foreach ( $this->options as $key => $value )
             {
-                if (isset($data[$key]))
+                if ( isset( $data[$key] ) )
                 {
                     $this->options[$key] = $data[$key];
                 }
                 $this->options[$key] = $this->getOption( $key );
             }
-        } elseif (is_string( $data) )
+        } elseif ( is_string( $data ) )
         {
             $this->formatText( $data );
         }
@@ -49,24 +49,24 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
     public function formatText( $text )
     {
-        if (is_string( $text ))
+        if ( is_string( $text ) )
         {
-            $text = explode(' ', $text);
+            $text = explode( ' ', $text );
         }
 
-        if (is_array( $text ))
+        if ( is_array( $text ) )
         {
-            if (count($text) > 1)
+            if ( count( $text ) > 1 )
             {
-                $this->text = strtoupper(substr($text[0], 0, 1).substr($text[1], 0, 1));
+                $this->text = strtoupper( substr( $text[0], 0, 1 ) . substr( $text[1], 0, 1 ) );
             } else
             {
-                if (strlen($text[0]) >= 2)
+                if ( strlen( $text[0] ) >= 2 )
                 {
-                    $this->text = strtoupper(substr($text[0], 0, 2));
+                    $this->text = strtoupper( substr( $text[0], 0, 2 ) );
                 } else
                 {
-                    $this->text = strtoupper(substr($text[0], 0, 1));
+                    $this->text = strtoupper( substr( $text[0], 0, 1 ) );
                 }
             }
 
@@ -80,16 +80,16 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
     public function getOption( $option )
     {
-        $group = $option .'s';
-        if (isset($this->options[$option]))
+        $group = $option . 's';
+        if ( isset( $this->options[$option] ) )
         {
-            if (array_has($this->config[$group], $this->options[$option] ) )
+            if ( array_has( $this->config[$group], $this->options[$option] ) )
             {
-                $value = array_get($this->config[$group], $this->options[$option]);
-                if (is_array($value))
+                $value = array_get( $this->config[$group], $this->options[$option] );
+                if ( is_array( $value ) )
                 {
-                    shuffle($value);
-                    $value = reset($value);
+                    shuffle( $value );
+                    $value = reset( $value );
                 }
 
                 return $value;
@@ -102,8 +102,8 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
     public function getMethod()
     {
-        $method = 'resolve' . ucfirst($this->config['method']);
-        if (method_exists($this, $method))
+        $method = 'resolve' . ucfirst( $this->config['method'] );
+        if ( method_exists( $this, $method ) )
         {
             return $this->$method();
         }
@@ -115,58 +115,14 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
     public function resolveStandard()
     {
-        $this->font = $this->config['default']['font'];
+        $color = new Color($this->config['default']['font']);
+        $this->font = $color->getRgb();
     }
 
-    public function validateColor ($color)
+    public function resolveOpposite()
     {
-        $color = trim($color);
-        if ( $color == "transparent" )
-        {
-            return $color;
-        }
-
-        $hex = str_replace('#', '', $color);
-        if ( preg_match('/^[a-f0-9]{6}$/i', $hex))
-        {
-            return $this->hex2rgb( $hex );
-        }
-
-        if ( preg_match('/([01]?\d\d?|2[0-4]\d|25[0-5])(\W+)([01]?\d\d?|2[0-4]\d|25[0-5])\W+(([01]?\d\d?|2[0-4]\d|25[0-5]))$/i', $color))
-        {
-            return explode(',', $color);
-        }
-
-        throw new Exception\NotSupportedException(
-            "Ivatar - ({$color}) is not a valid color format."
-        );
-
-    }
-
-    public function hex2rgb ( $hex )
-    {
-
-        if ( strlen( $hex ) == 6 )
-        {
-            $rgb['r'] = hexdec( substr( $hex, 0, 2 ) );
-            $rgb['g'] = hexdec( substr( $hex, 2, 2 ) );
-            $rgb['b'] = hexdec( substr( $hex, 4, 2 ) );
-        } else
-        {
-            if ( strlen( $hex ) == 3 )
-            {
-                $rgb['r'] = hexdec( str_repeat( substr( $hex, 0, 1 ), 2 ) );
-                $rgb['g'] = hexdec( str_repeat( substr( $hex, 1, 1 ), 2 ) );
-                $rgb['b'] = hexdec( str_repeat( substr( $hex, 2, 1 ), 2 ) );
-            } else
-            {
-                $rgb['r'] = '0';
-                $rgb['g'] = '0';
-                $rgb['b'] = '0';
-            }
-        }
-
-        return $rgb;
+        $color = new Color($this->options['color']);
+        $this->font = $color->inverse('rgb');
     }
 
 }
