@@ -125,4 +125,16 @@ abstract class AbstractDriver implements IvatarDriverInterface
         $this->font = $color->inverse('rgb');
     }
 
+    public function resolveDarken()
+    {
+        $color = new Color($this->options['color']);
+        $this->font = $color->darken( 30, 'rgb');
+    }
+
+    public function resolveLighten()
+    {
+        $color = new Color($this->options['color']);
+        $this->font = $color->lighten( 30, 'rgb');
+    }
+
 }
