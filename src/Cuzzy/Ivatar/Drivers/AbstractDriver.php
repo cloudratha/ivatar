@@ -15,7 +15,7 @@ abstract class AbstractDriver implements IvatarDriverInterface
     protected $font;
     protected $options = [
         'size'  => '',
-        'color' => ''
+        'group' => ''
     ];
 
     public function __construct( array $config )
@@ -115,26 +115,31 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
     public function resolveStandard()
     {
-        $color = new Color($this->config['default']['font']);
+        $color = new Color( $this->config['default']['font'] );
         $this->font = $color->getRgb();
     }
 
     public function resolveOpposite()
     {
-        $color = new Color($this->options['color']);
-        $this->font = $color->inverse('rgb');
+        $color = new Color( $this->options['group'] );
+        $this->font = $color->inverse( 'rgb' );
     }
 
     public function resolveDarken()
     {
-        $color = new Color($this->options['color']);
-        $this->font = $color->darken( 30, 'rgb');
+        $color = new Color( $this->options['group'] );
+        $this->font = $color->darken( 30, 'rgb' );
     }
 
     public function resolveLighten()
     {
-        $color = new Color($this->options['color']);
-        $this->font = $color->lighten( 30, 'rgb');
+        $color = new Color( $this->options['group'] );
+        $this->font = $color->lighten( 30, 'Rgb' );
+    }
+
+    public function resolveImage()
+    {
+        $this->resolveStandard();
     }
 
 }
