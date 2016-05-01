@@ -23,6 +23,14 @@ abstract class AbstractDriver implements IvatarDriverInterface
         $this->config = $config;
     }
 
+    public function create( $data )
+    {
+        $this->prepareData( $data );
+        $this->stage();
+
+        return $this;
+    }
+
     public function prepareData( $data )
     {
         if ( is_array( $data ) )
@@ -82,6 +90,33 @@ abstract class AbstractDriver implements IvatarDriverInterface
         throw new Exception\InvalidArgumentException(
             "Ivatar - The Text is not defined."
         );
+    }
+
+    public function format( $format, $param = null )
+    {
+        switch ( $format )
+        {
+            case 'base64':
+                $this->encode();
+                return 'data:image/jpeg;base64,' . base64_encode($this->encode);
+            case 'tag':
+                switch ($param)
+                {
+                    case 'circle':
+                        $style = 'style="border-radius:' . (( $this->options['size'] / 2) + 1) . 'px"';
+                        break;
+                    case 'rounded':
+                        $style = 'style="border-radius:' . ( $this->options['size'] / 8 )  . 'px"';
+                        break;
+                    default:
+                        $style = '';
+                }
+                return '<img src="' . $this->format('base64') . '" ' . $style . ' />';
+            default:
+                throw new Exception\NotSupportedException(
+                    "Ivatar - ({$format}) unsupported format."
+                );
+        }
     }
 
     public function getOption( $option )
