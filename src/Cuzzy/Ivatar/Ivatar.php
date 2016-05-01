@@ -10,6 +10,8 @@ class Ivatar implements Contracts\Factory
 
     protected $config = array();
 
+    private $ivatar;
+
     public function __construct( array $config = array() )
     {
         $this->configure( $config );
@@ -29,8 +31,31 @@ class Ivatar implements Contracts\Factory
 
     public function create( $data )
     {
-        $ivatar = $this->driver()->create( $data );
-        $response = new Response( $ivatar->encode() );
+        $this->ivatar = $this->driver()->create( $data );
+        return $this;
+    }
+
+    public function format( $format )
+    {
+        return $this->ivatar->format( $format );
+    }
+
+    public function save( $path )
+    {
+        return $this->ivatar->save( $path );
+    }
+
+    public function response()
+    {
+        $response = new Response( $this->ivatar->encode() );
+
+        return $response->make();
+    }
+
+    public function serve( $data )
+    {
+        $this->ivatar = $this->driver()->create( $data );
+        $response = new Response( $this->ivatar->encode() );
 
         return $response->make();
     }

@@ -4,6 +4,7 @@ namespace Cuzzy\Ivatar\Drivers\Gd;
 
 use Cuzzy\Ivatar\Color;
 use Cuzzy\Ivatar\Drivers\AbstractDriver;
+use Cuzzy\Ivatar\Exception;
 
 class Driver extends AbstractDriver
 {
@@ -74,6 +75,22 @@ class Driver extends AbstractDriver
         $x = ( ( $this->options['size'] - ( $initial[2] - $initial[0] ) ) / 2 ) + ( $this->config['offset']['x'] / 100 * $this->options['size'] );
         $y = ( ( $this->options['size'] - ( $initial[1] - $initial[7] ) ) / 2 ) + ( $initial[1] - $initial[7] ) + ( $this->config['offset']['y'] / 100 * $this->options['size'] );
         imagettftext( $this->ivatar, $size, 0, $x, $y, $color, $this->config['font'], $this->text );
+    }
+
+    public function format( $format )
+    {
+        switch ( $format )
+        {
+            case 'base64':
+                $this->encode();
+                return 'data:image/jpeg;base64,' . base64_encode($this->encode);
+            case 'tag':
+                return '<img src="' . $this->format('base64') . '" />';
+            default:
+                throw new Exception\NotSupportedException(
+                    "Ivatar - ({$format}) unsupported format."
+                );
+        }
     }
 
     public function encode()
