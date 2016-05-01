@@ -40,8 +40,8 @@ class Driver extends AbstractDriver
                     );
             }
             $prop = $info[0] / ( $info[1] / $this->options['size'] );
-            imagealphablending( $this->ivatar, true);
-            imagecopyresampled( $this->ivatar, $image, 0, 0, ($prop - $this->options['size']) / 2, 0, $prop , $this->options['size'], $info[0], $info[1] );
+            imagealphablending( $this->ivatar, true );
+            imagecopyresampled( $this->ivatar, $image, 0, 0, ( $prop - $this->options['size'] ) / 2, 0, $prop, $this->options['size'], $info[0], $info[1] );
         }
     }
 
@@ -70,13 +70,39 @@ class Driver extends AbstractDriver
 
     public function encode()
     {
-        ob_start();
-        imagejpeg( $this->ivatar, null, 100 );
-        $buffer = ob_get_contents();
-        ob_end_clean();
+        if ( !$this->exists() )
+        {
+            ob_start();
+            imagejpeg( $this->ivatar, null, 100 );
+            $buffer = ob_get_contents();
+            ob_end_clean();
+
+        } else
+        {
+            $path = $this->getExport();
+            $buffer = file_get_contents( $path['path'] );
+        }
+
         $this->encode = $buffer;
 
         return $this;
+    }
+
+    public function save()
+    {
+        $path = $this->getExport();
+        if ( !file_exists( $path['path'] ) )
+        {
+            imagejpeg( $this->ivatar, $path['path'], 100 );
+            $this->destroy();
+        }
+
+        return $path;
+    }
+
+    public function destroy()
+    {
+        imagedestroy( $this->ivatar );
     }
 
 }

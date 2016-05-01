@@ -10,9 +10,12 @@ abstract class AbstractDriver implements IvatarDriverInterface
 {
     public $ivatar;
     public $encode;
+    public $md5;
     protected $config;
     protected $text;
     protected $font;
+    protected $size;
+    protected $group;
     protected $options = [
         'size'  => '',
         'group' => ''
@@ -26,7 +29,10 @@ abstract class AbstractDriver implements IvatarDriverInterface
     public function create( $data )
     {
         $this->prepareData( $data );
-        $this->stage();
+        if ( !$this->exists() )
+        {
+            $this->stage();
+        }
 
         return $this;
     }
@@ -43,6 +49,7 @@ abstract class AbstractDriver implements IvatarDriverInterface
             {
                 if ( isset( $data[$key] ) )
                 {
+                    $this->$key = $data[$key];
                     $this->options[$key] = $data[$key];
                 }
                 $this->options[$key] = $this->getOption( $key );
@@ -53,6 +60,8 @@ abstract class AbstractDriver implements IvatarDriverInterface
         }
 
         $this->getMethod();
+
+        $this->md5 = md5( 'text=' . $this->text . '&size=' . $this->size . '&color=' . $this->group );
     }
 
     public function formatText( $text )
@@ -64,7 +73,7 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
         if ( is_array( $text ) )
         {
-            if ($this->config['initials'] > 1)
+            if ( $this->config['initials'] > 1 )
             {
                 if ( count( $text ) > 1 )
                 {
@@ -97,21 +106,23 @@ abstract class AbstractDriver implements IvatarDriverInterface
         switch ( $format )
         {
             case 'base64':
-                $this->encode();
-                return 'data:image/jpeg;base64,' . base64_encode($this->encode);
+                $encode = $this->encode();
+
+                return 'data:image/jpeg;base64,' . base64_encode( $encode );
             case 'tag':
-                switch ($param)
+                switch ( $param )
                 {
                     case 'circle':
-                        $style = 'style="border-radius:' . (( $this->options['size'] / 2) + 1) . 'px"';
+                        $style = 'style="border-radius:' . ( ( $this->options['size'] / 2 ) + 1 ) . 'px"';
                         break;
                     case 'rounded':
-                        $style = 'style="border-radius:' . ( $this->options['size'] / 8 )  . 'px"';
+                        $style = 'style="border-radius:' . ( $this->options['size'] / 8 ) . 'px"';
                         break;
                     default:
                         $style = '';
                 }
-                return '<img src="' . $this->format('base64') . '" ' . $style . ' />';
+
+                return '<img src="' . $this->format( 'base64' ) . '" ' . $style . ' />';
             default:
                 throw new Exception\NotSupportedException(
                     "Ivatar - ({$format}) unsupported format."
@@ -141,6 +152,28 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
     }
 
+    public function exists()
+    {
+        $path = $this->getExport();
+
+        return is_file( $path['path'] );
+    }
+
+    public function getExport()
+    {
+        $filename = $this->getMd5() . '.jpg';
+        $path = $this->config['export'] . '/' . $filename;
+        $pattern = '/(?:public)(.*)/';
+        preg_match( $pattern, $path, $url );
+
+        return [ 'filename' => $filename, 'path' => $path, 'url' => asset( $url[0] ) ];
+    }
+
+    public function getMd5()
+    {
+        return $this->md5;
+    }
+
     public function getMethod()
     {
         $method = 'resolve' . ucfirst( $this->config['method'] );
@@ -163,13 +196,13 @@ abstract class AbstractDriver implements IvatarDriverInterface
     public function resolveOpposite()
     {
         $color = new Color( $this->options['group'] );
-        $this->font = $color->inverse( 'rgb' );
+        $this->font = $color->inverse( 'Rgb' );
     }
 
     public function resolveDarken()
     {
         $color = new Color( $this->options['group'] );
-        $this->font = $color->darken( 30, 'rgb' );
+        $this->font = $color->darken( 30, 'Rgb' );
     }
 
     public function resolveLighten()

@@ -1,6 +1,11 @@
 <?php
 return array(
 
+    /*
+     * Set the Image Library to generate the renders
+     * Supported: "gd", "imagick"
+     */
+
     'driver' => 'gd',
 
     /*
@@ -36,6 +41,13 @@ return array(
      */
 
     'image' => '',
+
+    /*
+     * Export path used when saving relative to public.
+     * Defaults to "public/ivatar"
+     */
+
+    'export' => 'ivatar',
 
     /*
      * Define you defaults.

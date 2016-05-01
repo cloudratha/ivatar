@@ -21,6 +21,7 @@ class Ivatar implements Contracts\Factory
     {
         $this->config = array_replace( $this->config, $config );
         $this->validateFont();
+        $this->validateExport();
         if ( $this->config['method'] === 'image' )
         {
             $this->validateImage();
@@ -32,6 +33,7 @@ class Ivatar implements Contracts\Factory
     public function create( $data )
     {
         $this->ivatar = $this->driver()->create( $data );
+
         return $this;
     }
 
@@ -40,9 +42,9 @@ class Ivatar implements Contracts\Factory
         return $this->ivatar->format( $format, $param );
     }
 
-    public function save( $path )
+    public function save()
     {
-        return $this->ivatar->save( $path );
+        return $this->ivatar->save();
     }
 
     public function response()
@@ -50,6 +52,14 @@ class Ivatar implements Contracts\Factory
         $response = new Response( $this->ivatar->encode() );
 
         return $response->make();
+    }
+
+    public function fetch( $data )
+    {
+        $this->ivatar = $this->driver()->create( $data );
+        $path = $this->ivatar->getExport();
+
+        return $path['url'];
     }
 
     public function serve( $data )
@@ -84,6 +94,26 @@ class Ivatar implements Contracts\Factory
 
         throw new Exception\NotFoundException(
             "Ivatar - Font not found ({$this->config['font']})"
+        );
+    }
+
+    private function validateExport()
+    {
+        $this->config['export'] = ( $this->config['export'] === '' ) ? public_path( 'ivatar' ) : public_path( $this->config['font'] );
+
+        if ( !is_dir( $this->config['export'] ) )
+        {
+            if ( mkdir( $this->config['export'], 0777, true ) )
+            {
+                return true;
+            }
+        } else
+        {
+            return true;
+        }
+
+        throw new Exception\NotFoundException(
+            "Ivatar - Export folder could not be instantiated ({$this->config['export']})"
         );
     }
 
