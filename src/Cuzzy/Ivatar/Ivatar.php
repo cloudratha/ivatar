@@ -13,12 +13,16 @@ class Ivatar implements Contracts\Factory
     public function __construct( array $config = array() )
     {
         $this->configure( $config );
-        $this->validateFont();
     }
 
     public function configure( array $config = array() )
     {
         $this->config = array_replace( $this->config, $config );
+        $this->validateFont();
+        if ( $this->config['method'] === 'image' )
+        {
+            $this->validateImage();
+        }
 
         return $this;
     }
@@ -40,11 +44,11 @@ class Ivatar implements Contracts\Factory
             return new $driverclass( $this->config );
         }
         throw new Exception\NotSupportedException(
-            "Driver ({$drivername}) could not be instantiated."
+            "Ivatar - Driver ({$drivername}) could not be instantiated."
         );
     }
 
-    public function validateFont()
+    private function validateFont()
     {
         $this->config['font'] = ( $this->config['font'] === '' ) ? $this->config['font'] = __DIR__ . '/Assets/OpenSans-Bold.ttf' : base_path( $this->config['font'] );
 
@@ -54,7 +58,21 @@ class Ivatar implements Contracts\Factory
         }
 
         throw new Exception\NotFoundException(
-            "Font not found ({$this->config['font']})"
+            "Ivatar - Font not found ({$this->config['font']})"
+        );
+    }
+
+    private function validateImage()
+    {
+        $this->config['image'] = base_path( $this->config['image'] );
+
+        if ( is_file( $this->config['font'] ) )
+        {
+            return true;
+        }
+
+        throw new Exception\NotFoundException(
+            "Ivatar - Image not found ({$this->config['font']})"
         );
     }
 

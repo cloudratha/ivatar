@@ -56,18 +56,24 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
         if ( is_array( $text ) )
         {
-            if ( count( $text ) > 1 )
+            if ($this->config['initials'] > 1)
             {
-                $this->text = strtoupper( substr( $text[0], 0, 1 ) . substr( $text[1], 0, 1 ) );
-            } else
-            {
-                if ( strlen( $text[0] ) >= 2 )
+                if ( count( $text ) > 1 )
                 {
-                    $this->text = strtoupper( substr( $text[0], 0, 2 ) );
+                    $this->text = strtoupper( substr( $text[0], 0, 1 ) . substr( $text[1], 0, 1 ) );
                 } else
                 {
-                    $this->text = strtoupper( substr( $text[0], 0, 1 ) );
+                    if ( strlen( $text[0] ) >= 2 )
+                    {
+                        $this->text = strtoupper( substr( $text[0], 0, 2 ) );
+                    } else
+                    {
+                        $this->text = strtoupper( substr( $text[0], 0, 1 ) );
+                    }
                 }
+            } else
+            {
+                $this->text = strtoupper( substr( $text[0], 0, 1 ) );
             }
 
             return true;

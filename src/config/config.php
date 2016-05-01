@@ -4,6 +4,13 @@ return array(
     'driver' => 'gd',
 
     /*
+    * Number of Initials to display.
+    * 1 or 2
+    */
+
+    'initials' => 2,
+
+    /*
      * Path to TTF font.
      * Defaults to OpenSans Bold https://www.google.com/fonts/specimen/Open+Sans
      */
