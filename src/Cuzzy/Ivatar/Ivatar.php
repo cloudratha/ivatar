@@ -35,9 +35,9 @@ class Ivatar implements Contracts\Factory
         return $this;
     }
 
-    public function format( $format )
+    public function format( $format, $param = null )
     {
-        return $this->ivatar->format( $format );
+        return $this->ivatar->format( $format, $param );
     }
 
     public function save( $path )
