@@ -166,7 +166,7 @@ abstract class AbstractDriver implements IvatarDriverInterface
         $pattern = '/(?:public)(.*)/';
         preg_match( $pattern, $path, $url );
 
-        return [ 'filename' => $filename, 'path' => $path, 'url' => asset( $url[0] ) ];
+        return [ 'filename' => $filename, 'path' => $path, 'url' => asset( $url[1] ) ];
     }
 
     public function getMd5()

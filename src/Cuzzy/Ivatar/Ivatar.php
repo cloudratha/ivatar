@@ -57,9 +57,10 @@ class Ivatar implements Contracts\Factory
     public function fetch( $data )
     {
         $this->ivatar = $this->driver()->create( $data );
+        $this->ivatar->save();
         $path = $this->ivatar->getExport();
 
-        return $path['url'];
+        return $path;
     }
 
     public function serve( $data )
