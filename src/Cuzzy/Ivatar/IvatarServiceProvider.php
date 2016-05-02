@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 class IvatarServiceProvider extends ServiceProvider
 {
 
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Bootstrap the application services.
@@ -16,9 +16,9 @@ class IvatarServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes(array(
-            __DIR__.'/../../config/config.php' => config_path('ivatar.php')
-        ));
+        $this->publishes( array(
+            __DIR__ . '/../../config/config.php' => config_path( 'ivatar.php' )
+        ) );
     }
 
     /**
@@ -30,18 +30,19 @@ class IvatarServiceProvider extends ServiceProvider
     {
 
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/config.php',
+            __DIR__ . '/../../config/config.php',
             'ivatar'
         );
 
-        $this->app->bind( 'Ivatar', function ($app) {
-            return new Ivatar($app['config']['ivatar']);
-        });
+        $this->app->bind( 'Ivatar', function ( $app )
+        {
+            return new Ivatar( $app['config']['ivatar'] );
+        } );
 
     }
 
     public function provides()
     {
-        return ['ivatar'];
+        return [ 'Ivatar' ];
     }
 }

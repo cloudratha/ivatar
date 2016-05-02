@@ -11,6 +11,7 @@ class Driver extends AbstractDriver
     private function init()
     {
         $this->ivatar = imagecreatetruecolor( $this->options['size'], $this->options['size'] );
+        imagealphablending( $this->ivatar, true );
     }
 
     private function background()
@@ -40,7 +41,7 @@ class Driver extends AbstractDriver
                     );
             }
             $prop = $info[0] / ( $info[1] / $this->options['size'] );
-            imagealphablending( $this->ivatar, true );
+
             imagecopyresampled( $this->ivatar, $image, 0, 0, ( $prop - $this->options['size'] ) / 2, 0, $prop, $this->options['size'], $info[0], $info[1] );
         }
     }

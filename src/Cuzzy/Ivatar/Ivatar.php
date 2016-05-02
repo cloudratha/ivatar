@@ -4,10 +4,6 @@ namespace Cuzzy\Ivatar;
 
 class Ivatar implements Contracts\Factory
 {
-    protected $drivers = [
-        'gd'
-    ];
-
     protected $config = array();
 
     private $ivatar;
@@ -30,7 +26,7 @@ class Ivatar implements Contracts\Factory
         return $this;
     }
 
-    public function create( $data )
+    public function create( array $data )
     {
         $this->ivatar = $this->driver()->create( $data );
 
@@ -54,16 +50,15 @@ class Ivatar implements Contracts\Factory
         return $response->make();
     }
 
-    public function fetch( $data )
+    public function fetch( array $data )
     {
         $this->ivatar = $this->driver()->create( $data );
-        $this->ivatar->save();
-        $path = $this->ivatar->getExport();
+        $path = $this->ivatar->save();
 
         return $path;
     }
 
-    public function serve( $data )
+    public function serve( array $data )
     {
         $this->ivatar = $this->driver()->create( $data );
         $response = new Response( $this->ivatar->encode() );

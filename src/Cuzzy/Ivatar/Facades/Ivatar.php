@@ -1,4 +1,5 @@
 <?php
+
 namespace Cuzzy\Ivatar\Facades;
 
 use Illuminate\Support\Facades\Facade;
@@ -12,6 +13,6 @@ class Ivatar extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'Cuzzy\Ivatar\Ivatar';
+        return 'Ivatar';
     }
 }

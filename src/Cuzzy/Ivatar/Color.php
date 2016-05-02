@@ -5,7 +5,6 @@ namespace Cuzzy\Ivatar;
 /**
  * Conversions based off mexitek - phpColors https://github.com/mexitek/phpColors
  */
-
 class Color
 {
     public $hex;

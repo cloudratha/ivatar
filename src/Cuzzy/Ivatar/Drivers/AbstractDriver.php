@@ -61,7 +61,7 @@ abstract class AbstractDriver implements IvatarDriverInterface
 
         $this->getMethod();
 
-        $this->md5 = md5( 'text=' . $this->text . '&size=' . $this->size . '&color=' . $this->group );
+        $this->md5 = md5( 'text=' . $this->text . '&method=' . $this->config['method'] . '&size=' . $this->size . '&color=' . $this->group );
     }
 
     public function formatText( $text )
