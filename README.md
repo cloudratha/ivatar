@@ -4,8 +4,8 @@ Ivatar is an Initials based Avatar Generator for Laravel 5.
 
 ## Supports
 
-GD Library
-Imagick
+- GD Library
+- Imagick
 
 ## Documentation
 
