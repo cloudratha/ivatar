@@ -86,7 +86,7 @@ class Driver extends AbstractDriver
 
         $this->encode = $buffer;
 
-        return $this;
+        return $this->encode;
     }
 
     public function save()
