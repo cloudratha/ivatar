@@ -95,7 +95,7 @@ class Ivatar implements Contracts\Factory
 
     private function validateExport()
     {
-        $this->config['export'] = ( $this->config['export'] === '' ) ? public_path( 'ivatar' ) : public_path( $this->config['font'] );
+        $this->config['export'] = ( $this->config['export'] === '' ) ? public_path( 'ivatar' ) : public_path( $this->config['export'] );
 
         if ( !is_dir( $this->config['export'] ) )
         {
