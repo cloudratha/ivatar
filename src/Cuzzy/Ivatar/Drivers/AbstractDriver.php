@@ -5,6 +5,7 @@ namespace Cuzzy\Ivatar\Drivers;
 use Cuzzy\Ivatar\Drivers\Contracts\IvatarDriverInterface;
 use Cuzzy\Ivatar\Color;
 use Cuzzy\Ivatar\Exception;
+use Illuminate\Support\Arr;
 
 abstract class AbstractDriver implements IvatarDriverInterface
 {
@@ -135,9 +136,9 @@ abstract class AbstractDriver implements IvatarDriverInterface
         $group = $option . 's';
         if ( isset( $this->options[$option] ) )
         {
-            if ( array_has( $this->config[$group], $this->options[$option] ) )
+            if ( Arr::has( $this->config[$group], $this->options[$option] ) )
             {
-                $value = array_get( $this->config[$group], $this->options[$option] );
+                $value = Arr::get( $this->config[$group], $this->options[$option] );
                 if ( is_array( $value ) )
                 {
                     shuffle( $value );
